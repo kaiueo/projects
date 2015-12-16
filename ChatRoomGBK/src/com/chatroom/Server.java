@@ -16,19 +16,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class Server {
-	JFrame topFrame;
-	JPanel northPanel;
-	JPanel midPanel;
-	JPanel southPanel;
-	JLabel listLabel;
-	JLabel portLabel;
-	JScrollPane userListSP;
-	JList<String> userList;
-	JTextField portText;
-	JButton startBtn;
-	JPanel midSouthPanel;
-	JPanel midNorthPanel;
-	Server sFrame;
+	private JFrame topFrame;
+	private JPanel northPanel;
+	private JPanel midPanel;
+	private JPanel southPanel;
+	private JLabel listLabel;
+	private JLabel portLabel;
+	private JScrollPane userListSP;
+	private JList<String> userList;
+	private JTextField portText;
+	private JButton startBtn;
+	private JPanel midSouthPanel;
+	private JPanel midNorthPanel;
+	private Server sFrame;
 	
 	public void initFrame(){
 		
@@ -62,7 +62,6 @@ public class Server {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				int port;
 				String sPort = portText.getText();
 				try{
@@ -76,18 +75,18 @@ public class Server {
 				}
 				
 				
-				//smt.listen();
 			}
 		});
 		topFrame.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				// TODO Auto-generated method stub
 				System.exit(0);
 			}
 			
 		});
+		
+		//使窗口处在桌面的靠近中间位置
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width;
         int height = Toolkit.getDefaultToolkit().getScreenSize().height;
 

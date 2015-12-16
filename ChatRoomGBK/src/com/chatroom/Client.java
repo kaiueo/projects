@@ -32,35 +32,35 @@ public class Client extends Thread {
 	 */
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 4625662251265921723L;
-	String name;
-	String trueName;
-	JFrame loginFrame;
-	JLabel ipLabel;
-	JLabel portLabel;
-	JLabel nameLabel;
-	JTextField ipField;
-	JTextField portField;
-	JTextField nameField;
-	JButton loginBtn;
-	JPanel southLoginPanel;
-	JPanel northLoginPanel;
+	private String name;
+	private String trueName;
+	private JFrame loginFrame;
+	private JLabel ipLabel;
+	private JLabel portLabel;
+	private JLabel nameLabel;
+	private JTextField ipField;
+	private JTextField portField;
+	private JTextField nameField;
+	private JButton loginBtn;
+	private JPanel southLoginPanel;
+	private JPanel northLoginPanel;
 
-	JFrame topFrame;
-	JPanel northPanel;
-	JPanel midPanel;
-	JPanel southPanel;
-	JPanel southBtnPanel;
-	JLabel rcdLabel;
-	JLabel listLabel;
-	JTextArea rcdText;
-	JList<String> userList;
-	JScrollPane userListSP;
-	JTextField messageBar;
-	JButton sendBtn;
-	JButton clearBtn;
-	Socket socket;
-	BufferedReader in;
-	PrintWriter out;
+	private JFrame topFrame;
+	private JPanel northPanel;
+	private JPanel midPanel;
+	private JPanel southPanel;
+	private JPanel southBtnPanel;
+	private JLabel rcdLabel;
+	private JLabel listLabel;
+	private JTextArea rcdText;
+	private JList<String> userList;
+	private JScrollPane userListSP;
+	private JTextField messageBar;
+	private JButton sendBtn;
+	private JButton clearBtn;
+	private Socket socket;
+	private BufferedReader in;
+	private PrintWriter out;
 
 	public void initFrame() {
 		loginFrame = new JFrame("登陆");
@@ -92,6 +92,8 @@ public class Client extends Thread {
 		loginFrame.add(northLoginPanel, BorderLayout.NORTH);
 		loginFrame.pack();
 		
+		
+		//使窗口处在桌面的靠近中间的位置
 		int width = Toolkit.getDefaultToolkit().getScreenSize().width;
         int height = Toolkit.getDefaultToolkit().getScreenSize().height;
 
@@ -105,6 +107,8 @@ public class Client extends Thread {
         	
 		});
 		loginFrame.setVisible(true);
+		
+		//获得IP和端口号，尝试登陆
 		loginBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -120,7 +124,6 @@ public class Client extends Thread {
 					startClient();
 
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -145,6 +148,7 @@ public class Client extends Thread {
 
 		userListSP.getViewport().setView(userList);
 		
+		//清空聊天记录
 		clearBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -159,11 +163,8 @@ public class Client extends Thread {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String message = messageBar.getText();
-				// System.out.println(message);
 				out.println("talk|" + trueName + '|' + message);
 				messageBar.setText("");
-				// System.out.println(message);
-				// out.flush();
 
 			}
 		});
@@ -180,6 +181,8 @@ public class Client extends Thread {
 		topFrame.add(northPanel, BorderLayout.NORTH);
 		topFrame.add(midPanel, BorderLayout.CENTER);
 		topFrame.add(southPanel, BorderLayout.SOUTH);
+		
+		//在关闭的时候，向服务器通知自己要退出，并且关闭自己
 		topFrame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -189,33 +192,33 @@ public class Client extends Thread {
 			}
 
 		});
-		// topFrame.setSize(500, 600);
+
 		topFrame.pack();
 		topFrame.setLocation(width / 2-350 , height / 2-350 );
-		// topFrame.setVisible(true);
+
 	}
 
 	public void startClient() {
 		topFrame.setVisible(true);
-		out.println("login|" + name);
+		out.println("login|" + name);//向服务器通知自己登陆，将自己的信息发送给服务器
 		try {
 			String str = in.readLine();
 			StringTokenizer st = new StringTokenizer(str, "|");
 			String strKey = st.nextToken();
 
 			if (strKey.equals("name")) {
-				trueName = st.nextToken();
+				trueName = st.nextToken(); //服务器返回的自己在服务器端的真实名称
 			}
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
 			String strRec = in.readLine();
 			StringTokenizer st = new StringTokenizer(strRec, "|");
 			String strKey = st.nextToken();
-
+			
+			//服务器向自己发送的是用户列表
 			if (strKey.equals("users")) {
 				String[] names = new String[100];
 				int i = 0;
@@ -229,7 +232,6 @@ public class Client extends Thread {
 			}
 			this.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -244,11 +246,13 @@ public class Client extends Thread {
 					strRec = in.readLine();
 					StringTokenizer st = new StringTokenizer(strRec, "|");
 					String strKey = st.nextToken();
+					
+					//发送的为消息内容
 					if (strKey.equals("talk")) {
 						String name = st.nextToken();
 						String msg = st.nextToken();
 						rcdText.append(name + ": " + msg + '\n');
-					} else if (strKey.equals("users")) {
+					} else if (strKey.equals("users")) { //发送的为用户列表
 						String[] names = new String[100];
 						int i = 0;
 						while (st.hasMoreTokens()) {
@@ -261,7 +265,6 @@ public class Client extends Thread {
 					}
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

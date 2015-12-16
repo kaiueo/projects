@@ -19,14 +19,16 @@ public class ServerMainThread extends Thread {
 	public Vector<String> onlineUser = new Vector<String>(10, 5);
 	public Vector<Socket> socketUser = new Vector<Socket>(10, 5);
 	
+	//在用户列表中加入一个用户
 	public String addUser(String name, Socket socket){
 		
-		name = name+"#"+(id++);
+		name = name+"#"+(id++);//防止重名
 		onlineUser.addElement(name);
 		socketUser.addElement(socket);
 		return name;
 	}
 	
+	//在用户列表中删除一个用户
 	public boolean deleteUser(String name){
 		int i = onlineUser.indexOf(name);
 		onlineUser.remove(i);
@@ -41,7 +43,6 @@ public class ServerMainThread extends Thread {
 			serverSocket = new ServerSocket(port);
 			this.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -49,7 +50,8 @@ public class ServerMainThread extends Thread {
 	public void run() {
 		listen();
 	}
-
+	
+	//等待客户端接入，并启动一个新的线程与之交互
 	public void listen() {
 		while (true) {
 			try {
@@ -57,7 +59,6 @@ public class ServerMainThread extends Thread {
 				ServerMessageThread smt = new ServerMessageThread(socket, sFrame, this);
 				smt.start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -85,9 +86,10 @@ class ServerMessageThread extends Thread {
 	public void run() {
 		try {
 			String lgmsg = in.readLine();
-			//System.out.println(lgmsg);
 			StringTokenizer sttmp = new StringTokenizer(lgmsg, "|");
 			String key = sttmp.nextToken();
+			
+			//客户端发送的为登陆消息
 			if(key.equals("login")){
 				String name = sttmp.nextToken();
 				String trueName = serverMainThread.addUser(name, socket);
@@ -96,7 +98,6 @@ class ServerMessageThread extends Thread {
 			freshUser();
 			
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -105,22 +106,25 @@ class ServerMessageThread extends Thread {
 				strReceive = in.readLine();
 				st = new StringTokenizer(strReceive, "|");
 				strKey = st.nextToken();
+				
+				//客户端发送的为对话消息
 				if (strKey.equals("talk")) {
 					talk();
 				} 
+				//客户端发送的为退出消息
 				else if(strKey.equals("delete")){
 					serverMainThread.deleteUser(st.nextToken());
 					freshUser();
 					break;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		}
 	}
 	
+	//刷新自己与所有客户端的用户列表
 	public void freshUser(){
 		String[] names = new String[100];
 		String msg = "users";
@@ -140,7 +144,6 @@ class ServerMessageThread extends Thread {
 						true);
 				outSend.println(msg);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -149,10 +152,10 @@ class ServerMessageThread extends Thread {
 		
 	}
 	
+	//将消息发送到所有的客户端
 	public void talk(){
 		String name = st.nextToken();
 		String msg = st.nextToken();
-		//System.out.println(name+": " + msg);
 		for(Socket soc : serverMainThread.socketUser){
 			PrintWriter outSend;
 			try {
@@ -161,7 +164,6 @@ class ServerMessageThread extends Thread {
 						true);
 				outSend.println("talk|"+name+"|" + msg);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -179,9 +181,8 @@ class ServerMessageThread extends Thread {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);// 客户端输出
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // 客户端接收
+		}
 	}
 
 }
