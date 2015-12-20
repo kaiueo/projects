@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+
 public class Client extends Thread {
 	/**
 	 * 
@@ -53,6 +54,7 @@ public class Client extends Thread {
 	private JLabel rcdLabel;
 	private JLabel listLabel;
 	private JTextArea rcdText;
+	private JScrollPane rcdTextSP;
 	private JList<String> userList;
 	private JScrollPane userListSP;
 	private JTextField messageBar;
@@ -116,6 +118,9 @@ public class Client extends Thread {
 				String ip = ipField.getText();
 				int port = Integer.valueOf(portField.getText());
 				name = nameField.getText();
+				if(name.equals("")){
+					name = "匿名用户";
+				}
 				try {
 					socket = new Socket(ip, port);
 					in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -138,6 +143,9 @@ public class Client extends Thread {
 		rcdLabel = new JLabel("聊天记录：");
 		listLabel = new JLabel("在线用户：");
 		rcdText = new JTextArea(30, 30);
+		rcdText.setLineWrap(true);
+		rcdTextSP = new JScrollPane(rcdText);
+		
 		userList = new JList<String>();
 		userListSP = new JScrollPane();
 		messageBar = new JTextField(30);
@@ -171,7 +179,7 @@ public class Client extends Thread {
 
 		northPanel.add(rcdLabel);
 		northPanel.add(listLabel);
-		midPanel.add(rcdText);
+		midPanel.add(rcdTextSP);
 		midPanel.add(userListSP);
 		southBtnPanel.add(sendBtn);
 		southBtnPanel.add(clearBtn);
@@ -252,6 +260,7 @@ public class Client extends Thread {
 						String name = st.nextToken();
 						String msg = st.nextToken();
 						rcdText.append(name + ": " + msg + '\n');
+						rcdText.setCaretPosition(rcdText.getText().length());
 					} else if (strKey.equals("users")) { //发送的为用户列表
 						String[] names = new String[100];
 						int i = 0;
