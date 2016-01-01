@@ -67,10 +67,11 @@ def encrypt(n, e):
 """)
 
     s = input("请输入要加密的信息:")
+    input()
     while(s==""):
         s = input("请输入要加密的信息:")
 
-    input()
+
     print("计算出您所输入信息的unicode值")
     input()
     a = [ord(i) for i in s]
