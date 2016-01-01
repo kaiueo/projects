@@ -3,7 +3,7 @@ import math
 import random
 
 
-
+#计算素数表
 def primeTable(n):
     result = []
     result.append(2)
@@ -17,6 +17,7 @@ def primeTable(n):
 
     return result
 
+#计算n的值
 def computeN():
     result = primeTable(10000)
 
@@ -28,14 +29,17 @@ def computeN():
 
     return result[l], result[r], result[l] * result[r]
 
+#计算φ(n)的值
 def eulerOfN(p, q):
     return (p-1)*(q-1)
 
+#从1到φ(n)随机选择一个与φ(n)互质的数e
 def randomSelectE(n):
     primes = primeTable(min(10000, n));
     index = random.randint(10, len(primes)-1)
     return primes[index]
 
+#扩展欧几里的算法
 def Ext_Euclid (a, b):
     x1 = 1
     x2 = 0
@@ -59,70 +63,94 @@ def Ext_Euclid (a, b):
 
     return y2%b
 
+#加密
 def encrypt(n, e):
 
     print("""所谓"加密"，就是用公钥(n, e)算出下式的c：
 
     　　m^e ≡ c (mod n)
 """)
+    input()
 
     s = input("请输入要加密的信息:")
-    input()
+
     while(s==""):
         s = input("请输入要加密的信息:")
 
+    print()
 
     print("计算出您所输入信息的unicode值")
     input()
+
     a = [ord(i) for i in s]
     print(a)
     input()
+
     print("计算出每个字符的加密后的值,即c")
     input()
+
     c = [pow(i, e, n) for i in a]
     print(c)
+
     return c
 
+#解密
 def decrypt(n, d, c):
     print("""解密要用私钥(n, d)算出下式的m：
 
     　　c^d ≡ m (mod n)
 """)
     input()
+
     m = [pow(i, d, n) for i in c]
     print("对加密字符串的每个字符解密")
     input()
+
     print(m)
+    print()
+    input()
+
     a = [chr(i) for i in m]
     print("将其转换为字符串，就是我们解密后的内容")
     input()
+
     s = ''.join(a)
     print(s)
+
     return s
 
 
 def demo():
     print("这是一个RSA加密解密演示程序，本程序将向您详细的演示RSA加密与解密的过程")
     input()
+
     print("第一步，随机选择两个不相等的质数p和q。")
     input()
+
     p, q, n = computeN()
     print("经过计算，我们选取了p={0}, q={1}".format(p, q))
     input()
+
     print("第二步，计算p和q的乘积n。")
     input()
+
     print("n = {0} * {1} = {2}".format(p, q, n))
     input()
+
     print("第三步，计算n的欧拉函数φ(n)。")
     input()
+
     en = eulerOfN(p, q)
     print("根据公式：φ(n) = (p-1)(q-1)，我们计算出φ({0}) = {1} * {2} = {3}".format(n, p-1, q-1, en))
     input()
+
     print("第四步，随机选择一个整数e，条件是1< e < φ(n)，且e与φ(n) 互质。")
     input()
+
     e = randomSelectE(en)
     print("我们在1到{0}之间，随即选择了{1}".format(en, e))
     input()
+
     print("""第五步，计算e对于φ(n)的模反元素d。\n
 所谓"模反元素"就是指有一个整数d，可以使得ed被φ(n)除的余数为1。
 
@@ -140,21 +168,28 @@ def demo():
 
     d = Ext_Euclid(e, en)
     y = (1-e*d)//en
+
     print("通过扩展欧几里得算法,我们获得一组解（{0}, {1}),即 d = {0}。至此所有计算完成.".format(d, y))
     input()
+
     print("第六步，将n和e封装成公钥，n和d封装成私钥。 ")
     input()
+
     print("在本例中， n={0}，e={1}，d={2}，所以公钥就是 ({0},{1})，私钥就是（{0}, {2}）".format(n, e, d))
     input()
 
     print("下面就开始加密啦")
     input()
+
     c = encrypt(n, e)
     input()
+
     print("下面开始解密")
     input()
+
     s = decrypt(n, d, c)
     input()
+
     print()
     print("演示完毕，谢谢您的观看")
     input()
