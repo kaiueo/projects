@@ -18,31 +18,37 @@ class UI(object):
         Label(self.root, text="结果").grid(row=2, column=0)
         self.res = StringVar()
         self.rese = Entry(self.root, textvariable=self.res).grid(row=2, column=1)
-        Label(self.root, text="公钥").grid(row=3, column=0)
-        Label(self.root, text="密钥").grid(row=4, column=0)
+        Label(self.root, text="公钥(n, e)").grid(row=3, column=0)
+        Label(self.root, text="私钥(n, d)").grid(row=4, column=0)
         self.ebtn = Button(self.root, text="加密", command=self.encryptbtn).grid(row=5, column=0)
         self.dbtn = Button(self.root, text="解密", command=self.decryptbtn).grid(row=5, column=1)
-        self.rbtn = Button(self.root, text="重新生成公钥密钥", command=self.reproduce).grid(row=6)
+        self.rbtn = Button(self.root, text="重新生成公钥私钥", command=self.reproduce).grid(row=6)
         (self.p, self.q, self.n, self.en, self.e, self.d) = demo()
         self.public_key = StringVar()
-        self.public_key.set("(n, e)=({0}, {1})".format(self.n, self.e))
-        self.lpublic_key = Label(self.root, textvariable=self.public_key).grid(row=3, column=1)
+        self.public_key.set("({0}, {1})".format(self.n, self.e))
+        self.lpublic_key = Entry(self.root, textvariable=self.public_key).grid(row=3, column=1)
         self.private_key = StringVar()
-        self.private_key.set("(n, d)=({0}, {1})".format(self.n, self.d))
-        self.lprivate_key = Label(self.root, textvariable=self.private_key).grid(row=4, column=1)
+        self.private_key.set("({0}, {1})".format(self.n, self.d))
+        self.lprivate_key = Entry(self.root, textvariable=self.private_key).grid(row=4, column=1)
         self.root.mainloop()
 
     def encryptbtn(self):
-        s = self.msg.get()
-        c = encrypt(self.n, self.e, s)
-        self.res.set(str(c))
+        try:
+            s = self.msg.get()
+            pubk = eval(self.public_key.get())
+            c = encrypt(pubk[0], pubk[1], s)
+            self.res.set(str(c))
+        except:
+            self.res.set("请输入正确的公钥")
 
     def decryptbtn(self):
-        c = self.emsg.get()
-
         try:
+            c = self.emsg.get()
             m = eval(c)
-            s = decrypt(self.n, self.d, m)
+            if type(m) is int:
+                m = [m]
+            prik = eval(self.private_key.get())
+            s = decrypt(prik[0], prik[1], m)
             self.res.set(s)
         except ValueError:
             self.res.set("解密失败，请检测输入是否正确")
@@ -53,8 +59,8 @@ class UI(object):
 
     def reproduce(self):
         (self.p, self.q, self.n, self.en, self.e, self.d) = demo()
-        self.public_key.set("(n, e)=({0}, {1})".format(self.n, self.e))
-        self.private_key.set("(n, d)=({0}, {1})".format(self.n, self.d))
+        self.public_key.set("({0}, {1})".format(self.n, self.e))
+        self.private_key.set("({0}, {1})".format(self.n, self.d))
 
 
 # 计算素数表
