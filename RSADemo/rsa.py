@@ -98,6 +98,7 @@ def euler_n(p, q):
 def random_select_e(n):
     primes = prime_table(min(10000, n))
     index = random.randint(10, len(primes)-1)
+
     return primes[index]
 
 
@@ -151,10 +152,6 @@ def demo():
     d = ext_euclid(e, en)
 
     return p, q, n, en, e, d
-
-
-def ebtncom():
-    pass
 
 
 def main():
