@@ -39,9 +39,17 @@ class UI(object):
 
     def decryptbtn(self):
         c = self.emsg.get()
-        m = eval(c)
-        s = decrypt(self.n, self.d, m)
-        self.res.set(s)
+
+        try:
+            m = eval(c)
+            s = decrypt(self.n, self.d, m)
+            self.res.set(s)
+        except ValueError:
+            self.res.set("解密失败，请检测输入是否正确")
+        except SyntaxError:
+            self.res.set("解密失败，请检测输入是否正确")
+        except:
+            self.res.set("解密失败，请检测输入是否正确")
 
     def reproduce(self):
         (self.p, self.q, self.n, self.en, self.e, self.d) = demo()
