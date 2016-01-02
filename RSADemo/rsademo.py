@@ -3,51 +3,53 @@ import math
 import random
 
 
-#计算素数表
-def primeTable(n):
-    result = []
-    result.append(2)
-    result.append(3)
-    for i in range(5,n+1,2):
-        for j in range(2,int(math.sqrt(i))+2):
-            if i%j == 0:
+# 计算素数表
+def prime_table(n):
+    result = [2, 3]
+    for i in range(5, n+1, 2):
+        for j in range(2, int(math.sqrt(i))+2):
+            if i % j == 0:
                 break
         else:
             result.append(i)
 
     return result
 
-#计算n的值
-def computeN():
-    result = primeTable(10000)
+
+# 计算n的值
+def compute_n():
+    result = prime_table(10000)
 
     l = random.randint(700, len(result)-1)
     r = random.randint(700, len(result)-1)
-    while(l==r):
+    while l == r:
         l = random.randint(700, len(result)-1)
         r = random.randint(700, len(result)-1)
 
     return result[l], result[r], result[l] * result[r]
 
-#计算φ(n)的值
-def eulerOfN(p, q):
+
+# 计算φ(n)的值
+def euler_n(p, q):
     return (p-1)*(q-1)
 
-#从1到φ(n)随机选择一个与φ(n)互质的数e
-def randomSelectE(n):
-    primes = primeTable(min(10000, n));
+
+# 从1到φ(n)随机选择一个与φ(n)互质的数e
+def random_select_e(n):
+    primes = prime_table(min(10000, n))
     index = random.randint(10, len(primes)-1)
     return primes[index]
 
-#扩展欧几里的算法
-def Ext_Euclid (a, b):
+
+# 扩展欧几里的算法
+def ext_euclid(a, b):
     x1 = 1
     x2 = 0
     x3 = b
     y1 = 0
     y2 = 1
     y3 = a
-    while y3!=1:
+    while y3 != 1:
         if y3 == 0:
             return 0
         q = x3//y3
@@ -61,9 +63,10 @@ def Ext_Euclid (a, b):
         y2 = t2
         y3 = t3
 
-    return y2%b
+    return y2 % b
 
-#加密
+
+# 加密
 def encrypt(n, e):
 
     print("""所谓"加密"，就是用公钥(n, e)算出下式的c：
@@ -74,7 +77,7 @@ def encrypt(n, e):
 
     s = input("请输入要加密的信息:")
 
-    while(s==""):
+    while s == "":
         s = input("请输入要加密的信息:")
 
     print()
@@ -94,7 +97,8 @@ def encrypt(n, e):
 
     return c
 
-#解密
+
+# 解密
 def decrypt(n, d, c):
     print("""解密要用私钥(n, d)算出下式的m：
 
@@ -127,7 +131,7 @@ def demo():
     print("第一步，随机选择两个不相等的质数p和q。")
     input()
 
-    p, q, n = computeN()
+    p, q, n = compute_n()
     print("经过计算，我们选取了p={0}, q={1}".format(p, q))
     input()
 
@@ -140,14 +144,14 @@ def demo():
     print("第三步，计算n的欧拉函数φ(n)。")
     input()
 
-    en = eulerOfN(p, q)
+    en = euler_n(p, q)
     print("根据公式：φ(n) = (p-1)(q-1)，我们计算出φ({0}) = {1} * {2} = {3}".format(n, p-1, q-1, en))
     input()
 
     print("第四步，随机选择一个整数e，条件是1< e < φ(n)，且e与φ(n) 互质。")
     input()
 
-    e = randomSelectE(en)
+    e = random_select_e(en)
     print("我们在1到{0}之间，随即选择了{1}".format(en, e))
     input()
 
@@ -166,7 +170,7 @@ def demo():
 """)
     input()
 
-    d = Ext_Euclid(e, en)
+    d = ext_euclid(e, en)
     y = (1-e*d)//en
 
     print("通过扩展欧几里得算法,我们获得一组解（{0}, {1}),即 d = {0}。至此所有计算完成.".format(d, y))
@@ -187,28 +191,29 @@ def demo():
     print("下面开始解密")
     input()
 
-    s = decrypt(n, d, c)
+    decrypt(n, d, c)
     input()
 
     print()
     print("演示完毕，谢谢您的观看")
     input()
 
+
 def main():
-    while(True):
+    while True:
         print("1.开始演示")
         print("2.退出")
         try:
-           s = int(input("请输入相应的序号:"))
-           print()
-           if(s == 1):
-               demo()
-           elif(s==2):
+            s = int(input("请输入相应的序号:"))
+            print()
+            if s == 1:
+                demo()
+            elif s == 2:
                 break
-           else:
+            else:
                 print("请输入正确的序号")
                 continue
-        except:
+        except ValueError:
             print("请输入正确的序号")
 
 
